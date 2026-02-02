@@ -24,7 +24,9 @@ class PenggunaanResource extends Resource
 {
     protected static ?string $model = Penggunaan::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Bolt;
+
+    protected static ?string $navigationLabel = 'Penggunaan Listrik';
 
     protected static ?string $recordTitleAttribute = 'Penggunaan';
 
@@ -33,20 +35,31 @@ class PenggunaanResource extends Resource
         return $schema
             ->components([
                 Select::make('pelanggan_id')
-                    ->relationship('pelanggan', 'id')
+                    ->relationship('pelanggan', 'nama_pelanggan')
                     ->required(),
                 TextInput::make('bulan')
+                    ->placeholder('Masukkan Bulan')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->minValue(1)
+                    ->maxValue(12)
+                    ->default(date('m')),
                 TextInput::make('tahun')
+                    ->placeholder('Masukkan Tahun')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->minValue(2000)
+                    ->default(date('Y')),
                 TextInput::make('meter_awal')
+                    ->placeholder('Masukkan Meter Awal')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->suffix('kWH'),
                 TextInput::make('meter_akhir')
+                    ->placeholder('Masukkan Meter Akhir')
                     ->required()
-                    ->numeric(),
+                    ->numeric()
+                    ->suffix('kWH'),
             ]);
     }
 
@@ -78,13 +91,16 @@ class PenggunaanResource extends Resource
         return $table
             ->recordTitleAttribute('Penggunaan')
             ->columns([
+                TextColumn::make('id')
+                    ->label('ID Penggunaan')
+                    ->searchable(),
                 TextColumn::make('pelanggan.id')
+                    ->label('ID Pelanggan')
                     ->searchable(),
                 TextColumn::make('bulan')
-                    ->numeric()
+                    ->formatStateUsing(fn(string $state, Penggunaan $record) => date('M', strtotime($record->tahun . '-' . $state . '-' . '01')))
                     ->sortable(),
                 TextColumn::make('tahun')
-                    ->numeric()
                     ->sortable(),
                 TextColumn::make('meter_awal')
                     ->numeric()
@@ -105,9 +121,16 @@ class PenggunaanResource extends Resource
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->label('Detail'),
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->label('Hapus')
+                    ->modalHeading('Hapus')
+                    ->modalDescription('Apakah kamu yakin data ini akan dihapus?')
+                    ->modalSubmitActionLabel('Ya, Hapus')
+                    ->modalCancelActionLabel('Batal')
+                    ->successNotificationMessage('Berhasil dihapus!'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

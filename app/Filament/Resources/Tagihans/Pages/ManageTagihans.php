@@ -1,32 +1,34 @@
 <?php
 
-namespace App\Filament\Resources\Tarifs\Pages;
+namespace App\Filament\Resources\Tagihans\Pages;
 
-use App\Filament\Resources\Tarifs\TarifResource;
+use App\Filament\Resources\Tagihans\TagihanResource;
+use App\Models\Penggunaan;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 
-class ManageTarifs extends ManageRecords
+class ManageTagihans extends ManageRecords
 {
-    protected static string $resource = TarifResource::class;
+    protected static string $resource = TagihanResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
             CreateAction::make()
-                ->label('Tambah Tarif')
+                ->label('Tambah')
                 ->icon('heroicon-o-plus')
-                ->modalHeading('Tambah Data Tarif')
+                ->modalHeading('Tambah Data Tagihan')
                 ->modalSubmitActionLabel('Tambah')
                 ->createAnotherAction(fn(Action $action) => $action->label('Simpan dan Tambah Lagi'))
-                ->modalCancelActionLabel('Batal'),
+                ->modalCancelActionLabel('Batal')
         ];
     }
 
     public function getTitle(): string|Htmlable
     {
-        return 'Data Tarif';
+        return 'Data Tagihan';
     }
 }

@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Filament\Resources\Pelanggans\Tables;
+namespace App\Filament\Resources\Users\Tables;
 
-use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -11,26 +10,22 @@ use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class PelanggansTable
+class UsersTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
                 TextColumn::make('id')
-                    ->label('ID Pelanggan')
+                    ->label('ID User')
+                    ->searchable(),
+                TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('username')
+                    ->label('Username')
                     ->searchable(),
-                TextColumn::make('nomor_kwh')
-                    ->label('Nomor KwH')
-                    ->searchable(),
-                TextColumn::make('nama_pelanggan')
-                    ->label('Nama Pelanggan')
-                    ->searchable(),
-                TextColumn::make('tarif.daya')
-                    ->label('Daya')
-                    ->searchable(),
+                TextColumn::make('level_id')
+                    ->label('Level'),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -50,7 +45,7 @@ class PelanggansTable
                 DeleteAction::make()
                     ->label('Hapus')
                     ->modalHeading('Hapus')
-                    ->modalDescription('Apakah kamu yakin akan menghapus data ini?')
+                    ->modalDescription('Apakah kamu yakin data ini akan dihapus?')
                     ->modalSubmitActionLabel('Ya, Hapus')
                     ->modalCancelActionLabel('Batal')
                     ->successNotificationMessage('Berhasil dihapus!'),
@@ -59,15 +54,6 @@ class PelanggansTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ])
-            ->emptyStateHeading('Tidak Ada Data')
-            ->emptyStateDescription('Tambahkan data pelanggan pertamamu, nanti akan muncul disini!')
-            ->emptyStateActions([
-                Action::make('create')
-                    ->label('Tambah Pelanggan')
-                    ->url(route('filament.admin.resources.pelanggans.create'))
-                    ->icon('heroicon-m-plus')
-                    ->button(),
             ]);
     }
 }

@@ -13,12 +13,10 @@ return new class extends Migration
     {
         Schema::create('tagihans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('penggunaan_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('pelanggan_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->unsignedTinyInteger('bulan');
-            $table->unsignedSmallInteger('tahun');
+            $table->foreignId('penggunaan_id')->constrained('penggunaans')->cascadeOnDelete()->cascadeOnUpdate();
             $table->integer('jumlah_meter');
-            $table->enum('status', ['BELUM BAYAR', 'LUNAS'])->default('BELUM BAYAR');
+            $table->decimal('total_tagihan', 12, 2);
+            $table->enum('status', ['BELUM_BAYAR', 'LUNAS'])->default('BELUM_BAYAR');
             $table->timestamps();
         });
     }

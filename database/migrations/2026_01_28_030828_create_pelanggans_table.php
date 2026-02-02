@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('pelanggans', function (Blueprint $table) {
             $table->id();
-            $table->string('username', 50)->unique();
+            $table->string('username')->unique();
             $table->string('password');
-            $table->string('nomor_kwh', 30)->unique();
-            $table->string('nama_pelanggan', 100);
+            $table->string('nomor_kwh')->unique();
+            $table->string('nama_pelanggan');
             $table->text('alamat');
-            $table->foreignId('tarif_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId('tarif_id')->constrained('tarifs')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }

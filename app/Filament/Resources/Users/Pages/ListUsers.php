@@ -1,24 +1,24 @@
 <?php
 
-namespace App\Filament\Resources\Tarifs\Pages;
+namespace App\Filament\Resources\Users\Pages;
 
-use App\Filament\Resources\Tarifs\TarifResource;
+use App\Filament\Resources\Users\UserResource;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ManageRecords;
+use Filament\Resources\Pages\ListRecords;
 use Illuminate\Contracts\Support\Htmlable;
 
-class ManageTarifs extends ManageRecords
+class ListUsers extends ListRecords
 {
-    protected static string $resource = TarifResource::class;
+    protected static string $resource = UserResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
             CreateAction::make()
-                ->label('Tambah Tarif')
+                ->label('Tambah')
                 ->icon('heroicon-o-plus')
-                ->modalHeading('Tambah Data Tarif')
+                ->modalHeading('Tambah Data User')
                 ->modalSubmitActionLabel('Tambah')
                 ->createAnotherAction(fn(Action $action) => $action->label('Simpan dan Tambah Lagi'))
                 ->modalCancelActionLabel('Batal'),
@@ -27,6 +27,6 @@ class ManageTarifs extends ManageRecords
 
     public function getTitle(): string|Htmlable
     {
-        return 'Data Tarif';
+        return 'Data User';
     }
 }

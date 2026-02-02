@@ -27,8 +27,10 @@ class PelangganPanelProvider extends PanelProvider
             ->id('pelanggan')
             ->path('pelanggan')
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Yellow,
             ])
+            ->login()
+            ->registration()
             ->discoverResources(in: app_path('Filament/Pelanggan/Resources'), for: 'App\Filament\Pelanggan\Resources')
             ->discoverPages(in: app_path('Filament/Pelanggan/Pages'), for: 'App\Filament\Pelanggan\Pages')
             ->pages([

@@ -13,15 +13,14 @@ return new class extends Migration
     {
         Schema::create('pembayarans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tagihan_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId('pelanggan_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('tagihan_id')->constrained('tagihans')->unique();
             $table->date('tanggal_pembayaran');
-            $table->unsignedTinyInteger('bulan_bayar');
-            $table->decimal('biaya_admin', 12, 2);
+            $table->decimal('biaya_admin', 10, 2);
             $table->decimal('total_bayar', 12, 2);
-            $table->foreignId('user_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
+            $table->enum('metode_pembayaran', ['CASH', 'TRANSFER']);
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
-        });
+        });        
     }
 
     /**

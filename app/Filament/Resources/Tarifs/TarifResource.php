@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Tarifs;
 use App\Filament\Resources\Tarifs\Pages\ManageTarifs;
 use App\Models\Tarif;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -96,15 +97,26 @@ class TarifResource extends Resource
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->label('Detail')
+                    ->modalHeading('Detail Tarif')
+                    ->modalCancelAction(fn(Action $action) => $action->label('Tutup')),
                 EditAction::make(),
-                DeleteAction::make(),
+                DeleteAction::make()
+                    ->label('Hapus')
+                    ->modalHeading('Hapus')
+                    ->modalDescription('Apakah kamu yakin data ini akan dihapus?')
+                    ->modalSubmitActionLabel('Ya, Hapus')
+                    ->modalCancelActionLabel('Batal')
+                    ->successNotificationMessage('Berhasil dihapus!'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->emptyStateHeading('Tidak Ada Data')
+            ->emptyStateDescription('Kamu bisa menambahkan data pertamamu dengan mengklik tombol Tambah');
     }
 
     public static function getPages(): array

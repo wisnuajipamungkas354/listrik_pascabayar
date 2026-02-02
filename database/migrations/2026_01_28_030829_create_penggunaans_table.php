@@ -13,13 +13,15 @@ return new class extends Migration
     {
         Schema::create('penggunaans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pelanggan_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->unsignedTinyInteger('bulan');
-            $table->unsignedSmallInteger('tahun');
+            $table->foreignId('pelanggan_id')->constrained('pelanggans')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->tinyInteger('bulan');
+            $table->year('tahun');
             $table->integer('meter_awal');
             $table->integer('meter_akhir');
             $table->timestamps();
+            $table->unique(['pelanggan_id', 'bulan', 'tahun']);
         });
+        
     }
 
     /**

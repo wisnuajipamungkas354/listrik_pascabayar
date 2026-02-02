@@ -10,10 +10,8 @@ class Tagihan extends Model
 {
     protected $fillable = [
         'penggunaan_id',
-        'pelanggan_id',
-        'bulan',
-        'tahun',
         'jumlah_meter',
+        'total_tagihan',
         'status'
     ];
 

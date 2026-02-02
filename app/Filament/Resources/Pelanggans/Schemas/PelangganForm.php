@@ -19,6 +19,7 @@ class PelangganForm
                 TextInput::make('password')
                     ->placeholder('Masukkan Password')
                     ->password()
+                    ->revealable()
                     ->required(),
                 TextInput::make('nomor_kwh')
                     ->label('Nomor KwH')
