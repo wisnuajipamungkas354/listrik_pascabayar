@@ -2,6 +2,10 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pelanggan\Pages\DashboardPelanggan;
+use App\Filament\Pelanggan\Pages\PelangganLogin;
+use App\Filament\Pelanggan\Pages\PelangganRegistration;
+use App\Filament\Pelanggan\Widgets\PelangganStatOverview;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -25,21 +29,24 @@ class PelangganPanelProvider extends PanelProvider
     {
         return $panel
             ->id('pelanggan')
-            ->path('pelanggan')
+            ->path('')
             ->colors([
                 'primary' => Color::Yellow,
             ])
-            ->login()
-            ->registration()
+            ->login(PelangganLogin::class)
+            ->registration(PelangganRegistration::class)
+            ->authGuard('pelanggan')
+            ->topNavigation()
             ->discoverResources(in: app_path('Filament/Pelanggan/Resources'), for: 'App\Filament\Pelanggan\Resources')
             ->discoverPages(in: app_path('Filament/Pelanggan/Pages'), for: 'App\Filament\Pelanggan\Pages')
             ->pages([
-                Dashboard::class,
+                DashboardPelanggan::class
             ])
             ->discoverWidgets(in: app_path('Filament/Pelanggan/Widgets'), for: 'App\Filament\Pelanggan\Widgets')
             ->widgets([
                 AccountWidget::class,
                 FilamentInfoWidget::class,
+                PelangganStatOverview::class
             ])
             ->middleware([
                 EncryptCookies::class,

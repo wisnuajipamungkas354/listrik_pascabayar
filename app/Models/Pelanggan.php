@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Pelanggan extends Model
+class Pelanggan extends Authenticatable implements FilamentUser, HasName
 {
     protected $fillable = [
         'username',
@@ -37,5 +40,15 @@ class Pelanggan extends Model
     public function pembayarans(): HasMany
     {
         return $this->hasMany(Pembayaran::class);
+    }
+
+    public function canAccessPanel(\Filament\Panel $panel): bool
+    {
+        return $panel->getId() === 'pelanggan';
+    }
+
+    public function getFilamentName(): string
+    {
+        return $this->nama_pelanggan;
     }
 }
