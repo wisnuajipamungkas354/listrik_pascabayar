@@ -12,19 +12,25 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
+use Midtrans\Config as MidtransConfig;
+use Midtrans\Snap;
 
 class TagihanAktifWidget extends TableWidget
 {
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => Tagihan::with('penggunaan')->whereHas('penggunaan', fn(Builder $query) => $query->where('pelanggan_id', auth('pelanggan')->user()->id))->where('status', 'BELUM_BAYAR'))
+            ->query(fn (): Builder => Tagihan::with('penggunaan')->whereHas('penggunaan', fn(Builder $query) => $query->where('pelanggan_id', auth('pelanggan')->user()->id))->orderBy('status', 'ASC'))
             ->columns([
                 TextColumn::make('penggunaan.bulan')
                     ->label('Bulan'),
 
                 TextColumn::make('penggunaan.tahun')
                     ->label('Tahun'),
+
+                TextColumn::make('jumlah_meter')
+                    ->label('Pemakaian')
+                    ->suffix(' kWH'),
 
                 TextColumn::make('total_tagihan')
                     ->label('Total')
@@ -50,6 +56,7 @@ class TagihanAktifWidget extends TableWidget
                     ->color('success')
                     ->modalHeading('Konfirmasi Pembayaran')
                     ->modalSubmitActionLabel('Bayar Sekarang')
+                    ->visible(fn(Tagihan $record) => $record->status === 'BELUM_BAYAR')
                     ->form([
                         Placeholder::make('periode')
                             ->label('Periode')
@@ -85,20 +92,57 @@ class TagihanAktifWidget extends TableWidget
                             ->reactive(),
                     ])
                     ->action(function (array $data, Tagihan $record) {
-                        // SEMENTARA (nanti ganti Midtrans)
-                        // dd($data, $record);
-                
-                        // contoh simpan pembayaran
-                        Pembayaran::create([
-                            'tagihan_id'         => $record->id,
-                            'tanggal_pembayaran' => date('Y-m-d'),
-                            'biaya_admin'        => $data['biaya_admin'],
-                            'total_bayar'        => $data['total_bayar'],
-                            'metode_pembayaran'  => 'TRANSFER'
-                        ]);
+                        MidtransConfig::$serverKey = config('services.midtrans.server_key');
+                        MidtransConfig::$isProduction = config('services.midtrans.is_production');
+                        MidtransConfig::$isSanitized = config('services.midtrans.is_sanitized');
+                        MidtransConfig::$is3ds = config('services.midtrans.is_3ds');
+                    
+                        if (empty(MidtransConfig::$serverKey)) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Konfigurasi Error')
+                                ->body('Server Key Midtrans belum diatur di .env')
+                                ->danger()
+                                ->send();
+                            return;
+                        }
 
-                        $record->update(['status' => 'LUNAS']);
-                        $record->save();
+                        $params = [
+                            'transaction_details' => [
+                                'order_id' => 'TRX-' . $record->id . '-' . time(),
+                                'gross_amount' => (int) $data['total_bayar'], 
+                            ],
+                            'customer_details' => [
+                                'first_name' => auth('pelanggan')->user()->nama_pelanggan,
+                            ],
+                            'item_details' => [
+                                [
+                                    'id' => 'BILL-' . $record->id,
+                                    'price' => (int) $record->total_tagihan,
+                                    'quantity' => 1,
+                                    'name' => 'Tagihan Listrik ' . $record->penggunaan->bulan . '/' . $record->penggunaan->tahun,
+                                ],
+                                [
+                                    'id' => 'ADM',
+                                    'price' => (int) $data['biaya_admin'],
+                                    'quantity' => 1,
+                                    'name' => 'Biaya Admin',
+                                ],
+                            ],
+                        ];
+                    
+                        try {
+                            $snapToken = Snap::getSnapToken($params);
+
+                            // Kirim event ke browser agar JavaScript memunculkan popup Snap
+                            $this->dispatch('open-midtrans-snap', snapToken: $snapToken);
+                    
+                        } catch (\Exception $e) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Gagal memproses pembayaran')
+                                ->danger()
+                                ->body($e->getMessage())
+                                ->send();
+                        }
                     })
                     ->successNotificationMessage('Pembayaran Berhasil!')
             ])

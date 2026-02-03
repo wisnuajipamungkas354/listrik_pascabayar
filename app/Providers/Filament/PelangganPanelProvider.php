@@ -14,6 +14,8 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Support\Facades\Blade;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -33,6 +35,7 @@ class PelangganPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Yellow,
             ])
+            ->favicon(asset('img/logo.png'))
             ->login(PelangganLogin::class)
             ->registration(PelangganRegistration::class)
             ->authGuard('pelanggan')
@@ -61,6 +64,27 @@ class PelangganPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->renderHook(PanelsRenderHook::BODY_END,
+              fn(): string => Blade::render('
+                <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config("midtrans.client_key") }}"></script>
+                <script>
+                    window.addEventListener("open-midtrans-snap", event => {
+                        window.snap.pay(event.detail.snapToken, {
+                            onSuccess: function(result) {
+                                window.location.reload();
+                            },
+                            onPending: function(result) {
+                                window.location.reload();
+                            },
+                            onError: function(result) {
+                                console.log(result);
+                            }
+                        });
+                    });
+                </script>
+            ')
+            )
+            ->spa();
     }
 }

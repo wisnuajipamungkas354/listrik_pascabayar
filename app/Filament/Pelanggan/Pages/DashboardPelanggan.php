@@ -20,9 +20,14 @@ class DashboardPelanggan extends Page
 
     protected static bool $shouldRegisterNavigation = true;
 
-    public function getTitle(): string|Htmlable
+    public function getHeading(): string|Htmlable|null
     {
         return 'Selamat Datang, ' . auth('pelanggan')->user()->nama_pelanggan;
+    }
+
+    public function getSubheading(): string|Htmlable|null
+    {
+        return 'Nomor Meteran: ' . auth('pelanggan')->user()->nomor_kwh;
     }
 
     public function getHeaderWidgets(): array
