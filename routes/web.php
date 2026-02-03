@@ -24,8 +24,6 @@ Route::post('/midtrans-callback', function(Request $request) {
               $tagihan->update(['status' => 'LUNAS']);
           } elseif ($transaction == 'pending') {
               $tagihan->update(['status' => 'BELUM_BAYAR']);
-          } elseif ($transaction == 'expire' || $transaction == 'cancel') {
-              $tagihan->update(['status' => 'BATAL']);
           }
 
           return response()->json(['message' => 'OK']);
