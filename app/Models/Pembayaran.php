@@ -9,11 +9,10 @@ class Pembayaran extends Model
 {
     protected $fillable = [
         'tagihan_id',
-        'pelanggan_id',
         'tanggal_pembayaran',
-        'bulan_bayar',
         'biaya_admin',
         'total_bayar',
+        'metode_pembayaran',
         'user_id'
     ];
 

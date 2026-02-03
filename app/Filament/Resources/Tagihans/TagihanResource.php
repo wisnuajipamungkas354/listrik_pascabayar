@@ -36,7 +36,12 @@ class TagihanResource extends Resource
         return $schema
             ->components([
                 Select::make('penggunaan_id')
-                    ->relationship('penggunaan', 'id')
+                    ->relationship('penggunaan', 'id', modifyQueryUsing: function (Builder $query, $get) {
+                        $currentId = $get('penggunaan_id');
+                        
+                        return $query->whereDoesntHave('tagihan')
+                            ->orWhere('id', $currentId);
+                    })
                     ->searchable()
                     ->searchingMessage('Mencari data...')
                     ->noSearchResultsMessage('Penggunaan tidak ditemukan')

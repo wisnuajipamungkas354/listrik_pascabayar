@@ -52,7 +52,12 @@ class PembayaranResource extends Resource
         return $schema
             ->components([
                 Select::make('tagihan_id')
-                    ->relationship('tagihan', 'id', modifyQueryUsing: fn(Builder $query) => $query->where('status', 'BELUM_BAYAR'))
+                    ->relationship('tagihan', 'id', modifyQueryUsing: function (Builder $query, $get) {
+                        $currentId = $get('tagihan_id');
+                        
+                        return $query->where('status', 'BELUM_BAYAR')->whereDoesntHave('pembayaran')
+                            ->orWhere('id', $currentId);
+                    })
                     ->reactive()
                     ->preload()
                     ->afterStateUpdated($hitungTotal)

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tagihans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('penggunaan_id')->constrained('penggunaans')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('penggunaan_id')->constrained('penggunaans')->cascadeOnDelete()->cascadeOnUpdate()->unique();
             $table->integer('jumlah_meter');
             $table->decimal('total_tagihan', 12, 2);
             $table->enum('status', ['BELUM_BAYAR', 'LUNAS'])->default('BELUM_BAYAR');
