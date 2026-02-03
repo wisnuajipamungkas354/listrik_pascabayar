@@ -41,7 +41,7 @@ Route::post('/midtrans-callback', function(Request $request) {
                         'tanggal_pembayaran' => now(),
                         'biaya_admin' => 2500,
                         'total_bayar' => $notif->gross_amount,
-                        'metode_pembayaran' => $notif->payment_type ?? 'MIDTRANS',
+                        'metode_pembayaran' => 'TRANSFER',
                     ]
                 );
 
