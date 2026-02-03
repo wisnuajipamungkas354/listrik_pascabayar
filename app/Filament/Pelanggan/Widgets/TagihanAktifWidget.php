@@ -144,7 +144,6 @@ class TagihanAktifWidget extends TableWidget
                                 ->send();
                         }
                     })
-                    ->successNotificationMessage('Pembayaran Berhasil!')
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

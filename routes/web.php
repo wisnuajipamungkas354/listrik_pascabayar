@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\TagihanController;
+use App\Models\Pembayaran;
 use App\Models\Tagihan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,14 @@ Route::post('/midtrans-callback', function(Request $request) {
           // Ambil ID tagihan asli dari order_id
           $tagihanId = explode('-', $order_id)[1];
           $tagihan = Tagihan::find($tagihanId);
+
+          Pembayaran::create([
+            'tagihan_id' => $tagihanId,
+            'tanggal_pembayaran' => date('Y-m-d'),
+            'biaya_admin' => 2500,
+            'total_bayar' => $notif->gross_amount,
+            'metode_pembayaran' => 'TRANSFER',
+          ]);
 
           if ($transaction == 'settlement') {
               $tagihan->update(['status' => 'LUNAS']);
