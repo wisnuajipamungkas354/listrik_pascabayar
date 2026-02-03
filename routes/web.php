@@ -3,6 +3,7 @@
 use App\Http\Controllers\TagihanController;
 use App\Models\Pembayaran;
 use App\Models\Tagihan;
+use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -19,7 +20,7 @@ Route::post('/midtrans-callback', function(Request $request) {
         $order_id = $notif->order_id;
         
         $tagihanId = explode('-', $order_id)[1];
-        $tagihan = Tagihan::find($tagihanId);
+        $tagihan = Tagihan::with('penggunaan.pelanggan')->find($tagihanId);
 
         if (!$tagihan) {
             return response()->json(['message' => 'Tagihan tidak ditemukan'], 404);
@@ -45,12 +46,22 @@ Route::post('/midtrans-callback', function(Request $request) {
                     ]
                 );
 
+                if ($tagihan && $tagihan->penggunaan && $tagihan->penggunaan->pelanggan) {
+    
+                    $pelanggan = $tagihan->penggunaan->pelanggan;
+                
+                    FilamentNotification::make()
+                        ->title('Pembayaran Berhasil')
+                        ->success()
+                        ->body("Terima kasih, pembayaran tagihan bulan {$tagihan->penggunaan->bulan} telah kami terima.")
+                        ->sendToDatabase($pelanggan);
+                }
+
             } elseif ($transaction == 'pending') {
                 $tagihan->update(['status' => 'BELUM_BAYAR']);
             }
         });
 
-        // Selalu return 200 agar Midtrans tidak mengirim ulang notifikasi
         return response()->json(['message' => 'Success']);
 
     } catch (\Exception $e) {

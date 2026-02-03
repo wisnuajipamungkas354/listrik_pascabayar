@@ -16,7 +16,9 @@ use Midtrans\Config as MidtransConfig;
 use Midtrans\Snap;
 
 class TagihanAktifWidget extends TableWidget
-{
+{   
+    protected static ?string $pollingInterval = '5s';
+
     public function table(Table $table): Table
     {
         return $table
@@ -89,7 +91,8 @@ class TagihanAktifWidget extends TableWidget
                             ->numeric()
                             ->prefix('Rp')
                             ->dehydrated()
-                            ->reactive(),
+                            ->reactive()
+                            ->default(fn(Tagihan $record) => $record->total_tagihan + 2500),
                     ])
                     ->action(function (array $data, Tagihan $record) {
                         MidtransConfig::$serverKey = config('services.midtrans.server_key');

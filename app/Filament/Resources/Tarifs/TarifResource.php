@@ -29,6 +29,11 @@ class TarifResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'Tarif';
 
+    public static function canViewAny(): bool
+    {
+        return auth('web')->user()->level_id === 1; 
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema

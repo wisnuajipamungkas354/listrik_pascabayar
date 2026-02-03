@@ -65,6 +65,7 @@ class PelangganPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->databaseNotifications()
             ->renderHook(PanelsRenderHook::BODY_END,
               fn(): string => Blade::render('
                 <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config("midtrans.client_key") }}"></script>

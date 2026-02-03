@@ -26,6 +26,11 @@ class UserResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'User';
 
+    public static function canViewAny(): bool
+    {
+        return auth('web')->user()->level_id === 1; 
+    }
+
     public static function form(Schema $schema): Schema
     {
         return UserForm::configure($schema);

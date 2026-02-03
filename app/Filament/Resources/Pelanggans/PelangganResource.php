@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class PelangganResource extends Resource
 {
@@ -25,6 +26,21 @@ class PelangganResource extends Resource
     protected static ?string $navigationLabel = 'Pelanggan';
 
     protected static ?string $recordTitleAttribute = 'Pelanggan';
+
+    public static function canCreate(): bool
+    {
+        return auth('web')->user()->level_id === 1; 
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth('web')->user()->level_id === 1; 
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth('web')->user()->level_id === 1; 
+    }
 
     public static function form(Schema $schema): Schema
     {
