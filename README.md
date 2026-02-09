@@ -65,7 +65,15 @@ Main tables used in this project:
 <p align="center">
   <img src="public/img/login-customer.png" width="800">
 </p>
-
+<p align="center">
+  <img src="public/img/halaman-pelanggan.png" width="800">
+</p>
+<p align="center">
+  <img src="public/img/dashboard-admin.png" width="800">
+</p>
+<p align="center">
+  <img src="public/img/admin-tagihan.png" width="800">
+</p>
 ---
 
 ## Installation & Setup
